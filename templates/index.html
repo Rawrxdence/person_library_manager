@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Persona Library Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-5">
+    <h1 class="mb-4">📚 My Personal Library</h1>
+    <div class="card card-body mb-4 bg-light">
+    <h3>Add a New Book</h3>
+    <form action="/add" method="POST" class="row g-3">
+        <div class="col-md-3">
+            <input type="text" name="title" class="form-control" placeholder="Book Title" required>
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="author" class="form-control" placeholder="Author" required>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" name="library_id">
+                <option value="" selected>-- Personal Book --</option>
+                {% for lib in libraries %}
+                    <option value="{{ lib.library_id }}">{{ lib.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="text" name="co_date" class="form-control" placeholder="CO Date (MM/DD/YY)">
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+    </form>
+    </div>
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{{ book.book_id }}</td>
+                <td>{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>
+                    {% if book.is_borrowed %}
+                        <span class="badge bg-warning text-dark">Borrowed (Due: {{ book.due_date }})</span>
+                    {% else %}
+                        <span class="badge bg-success">Owned</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if book.is_borrowed %}
+                    <a href="/return/{{ book.book_id}}" class="btn btn-sm btn-outline-danger"
+                    onclick="return confirm('Are you want to mark this book as returned?')">Return</a>
+                    {% else %}
+                    <a href="/delete/{{ book.book_id}}" class="btn btn-sm btn-outline-danger"
+                    onclick="return confirm('Are you sure you want to delete this book?')">Delete</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
